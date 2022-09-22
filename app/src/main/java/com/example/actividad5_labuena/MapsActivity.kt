@@ -178,7 +178,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
+    //TODO: me muero
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

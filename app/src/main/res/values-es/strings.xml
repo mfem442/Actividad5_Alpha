@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Actividad5_labuena</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="main_mapas">MOSTRAR MAPA</string>
+    <string name="main_fotos">FOTOS</string>
+</resources>

@@ -61,7 +61,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             pinCount = counter.toInt()
         }
 
-        Log.wtf("CONT", pinCount.toString())
         if (pinCount != 0){
             var lat = ""
             var lng = ""

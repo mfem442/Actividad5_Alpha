@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -49,30 +47,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        val solicitud = LocationRequest.create().apply {
-            interval = 10 * 1000
-            fastestInterval = 2 * 1000
-        }
-
-        if(ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
-        ){
-            LocationServices
-                .getFusedLocationProviderClient(this)
-                .requestLocationUpdates(
-                    solicitud,
-                    object: LocationCallback() {
-                        override fun onLocationResult(p0: LocationResult) {
-                            super.onLocationResult(p0)
-                            Log.wtf("ACTUALIZACION", p0.lastLocation.toString())
-                        }
-                    },
-                    Looper.myLooper()
-                )
-        }
     }
 
     /**
@@ -86,7 +60,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        val counter = sharedPrefs.getString("count", "-1")
+        val counter = sharedPrefs.getString("counter", "-1")
 
         if (counter != null) {
             pinCount = counter.toInt()
@@ -108,9 +82,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         // Add a marker in classroom and move the camera
-        val salon = LatLng(20.734797, -103.457287)
-        mMap.addMarker(MarkerOptions().position(salon).title("SALON"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(salon, 18f))
+        val salonPos = LatLng(20.734797, -103.457287)
+        mMap.addMarker(MarkerOptions().position(salonPos).title("SALON"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(salonPos, 18f))
 
         habilitarMyLocation()
 
@@ -118,7 +92,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.addMarker(
                 MarkerOptions()
                     .position(latLng)
-                    .title("$latLng")
+                    .title("PIN")
                     .alpha(0.5f)
                     .icon(
                         BitmapDescriptorFactory.defaultMarker(
@@ -130,7 +104,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             //Toast de ubicacion del pin
             Toast.makeText(
                 this,
-                "UBICACIÓN: $latLng",
+                "$latLng",
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -141,17 +115,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             editor.putString("Lat: " + (pinCount - 1).toString(), latLng.latitude.toString())
             editor.putString("Lng: " + (pinCount - 1).toString(), latLng.longitude.toString())
             editor.putInt("pinCount: ", pinCount)
-            editor.putString("count", pinCount.toString())
+            editor.putString("counter", pinCount.toString())
 
             editor.commit()
         }
+
+        mMap.setOnMarkerClickListener { marker ->
+            if (marker.isInfoWindowShown) {
+                marker.hideInfoWindow()
+            } else {
+                marker.showInfoWindow()
+
+                //Toast de ubicacion del pin
+                Toast.makeText(
+                    this,
+                    "${marker.position}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            true
+        }
+
+
     }
 
     fun makePin(pinPos : LatLng){
         mMap.addMarker(
             MarkerOptions()
                 .position(pinPos)
-                .title("$pinPos")
+                .title("PIN")
                 .icon(
                     BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_GREEN
@@ -209,3 +201,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
+
+
+
+
